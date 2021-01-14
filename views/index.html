@@ -1,46 +1,59 @@
-
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Quality Assurance with Chai | freeCodeCamp.org</title>
-    <link rel="shortcut icon" href="https://cdn.freecodecamp.org/universal/favicons/favicon-32x32.png" type="image/x-icon"/>
+    <title>Metric/Imperial Converter</title>
+    <meta name="description" content="An example of the Free Code Camp Metric/Imperial Converter Project">
+    <link id="favicon" rel="icon" href="https://cdn.freecodecamp.org/universal/favicons/favicon-32x32.png" type="image/x-icon">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./public/style.css">
   </head>
   <body>
     <header>
-      <h1>
-        Automated Testing
-      </h1>
+      <h1>Metric/Imperial Converter</h1>
     </header>
-    <main>
-      <h2>Functional Tests Example</h2>
-      <div class="pane">
-        <h4>Famous Italian Explorers</h4>
-        <form action="/travellers" method="POST" id="f1">
-          <label for="i1">surname: </label>
-          <input id="i1" type="text" name="surname" placeholder="try with 'Polo'...">
-          <button type="submit">submit</button>
+    <hr style='margin: 50px'>
+    <section>
+      <h3>Example usage</h3>
+      <code>/api/convert?input=4gal</code><br>
+      <code>/api/convert?input=1/2km</code><br>
+      <code>/api/convert?input=5.4/3lbs</code><br>
+      <code>/api/convert?input=kg</code><br>
+      <h3>Example return</h3>
+      <code>{ initNum: 3.1, initUnit: 'mi', returnNum: 4.98895, returnUnit: 'km', string: '3.1 miles converts to 4.98895 kilometers' }</code>
+    </section>
+    <hr style='margin: 50px'>
+    <section>
+      <div id='testui' >
+        <h3 style="text-align: left">Front-End</h3>
+        <form id="convertForm" class="border">
+          <input type="text" id="convertField" name="input" placeholder="3.1mi" style="width: 200px">
+          <input id="convert" type="submit" value='Convert!'>
         </form>
-        <div id="tn"></div>
+        <p id='result'></p>
+        <code id='jsonResult'></code>
       </div>
-      <div class="pane">
-        <p class="specs">
-          Input form HTML:<br>
-          ----------------<br>
-          &lt;input type="text" name="surname"&gt;<br>
-          &lt;button type="submit"&gt;submit&lt;/button&gt;<br>
-          <br>
-          Results div HTML (after Ajax):<br>
-          ------------------------------<br>
-          &lt;p&gt;first name:&lt;span id="name"&gt;[name]&lt;/span&gt;&lt;/p&gt;<br>
-          &lt;p&gt;last name:&lt;span id="surname"&gt;[surname]&lt;/span&gt;&lt;/p&gt;<br>
-          &lt;p&gt;dates:&lt;span id="dates"&gt;[birth - death]&lt;/span&gt;&lt;/p&gt;<br>
-        </p>
-      </div>
-    </main>
-    <script src='/client.js'></script>
+    </section>
+    <!-- Your web-app is https, so your scripts need to be too -->
+    <script src="https://code.jquery.com/jquery-2.2.1.min.js"
+            integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
+            crossorigin="anonymous"></script>
+    <script>
+      $(function() {
+        $('#convertForm').submit(function(event) {
+          event.preventDefault();
+          $.ajax({
+            url: '/api/convert',
+            type: 'get',
+            data: $('#convertForm').serialize(),
+            success: function(data) {
+              $('#result').text(data.string || data);
+              $('#jsonResult').text(JSON.stringify(data));
+            }
+          });
+        });
+      });
+   </script>
   </body>
 </html>
