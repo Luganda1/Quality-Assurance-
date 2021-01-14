@@ -14,19 +14,19 @@ suite("Functional Tests", function () {
         .request(server)
         .get("/hello")
         .end(function (err, res) {
-          assert.fail(res.status, 200);
-          assert.fail(res.text, "hello Guest");
+          assert.equal(res.status, 200);
+          assert.equal(res.text, "hello Guest");
           done();
         });
     });
     // #2
-    test("Test GET /hello with your name", function (done) {
+    test("Test GET /hello with no name", function (done) {
       chai
         .request(server)
-        .get("/hello?name=xy_z")
+        .get("/hello?name=Luganda1")
         .end(function (err, res) {
-          assert.fail(res.status, 200);
-          assert.fail(res.text, "hello xy_z");
+          assert.equal(res.status, 200);
+          assert.equal(res.text, "hello Luganda1");
           done();
         });
     });
@@ -35,16 +35,28 @@ suite("Functional Tests", function () {
       chai
         .request(server)
         .put("/travellers")
-
+        .send({surname: "Colombo"})
         .end(function (err, res) {
-          assert.fail();
-
+         assert.equal(res.status, 200);
+          assert.equal(res.type, 'application/json');
+          assert.equal(res.body.name,  'Cristoforo', 'res.body.name should be "Christoforo"');
+          assert.equal(res.body.surname,  'Colombo', 'res.body.name should be "Colombo"');
+        
           done();
         });
     });
     // #4
     test('send {surname: "da Verrazzano"}', function (done) {
-      assert.fail();
+      chai
+        .request(server)
+        .put("/traveller")
+        .send({surname: "da Verrazzano"})
+        .end((error, res) => {
+          assert.equal(res.status, 200);
+          assert.equal(res.type, 'application/json')
+          assert.equal(res.body.name, 'Giovanni')
+          assert.equal(res.body.surname, 'da Verrazzano')
+      })
 
       done();
     });
@@ -52,23 +64,36 @@ suite("Functional Tests", function () {
 });
 
 const Browser = require("zombie");
-
+ Browser.site = 'https://quality-assurance-allproject.glitch.me'
 suite("e2e Testing with Zombie.js", function () {
+const browser = new Browser();
+ 
+  suiteSetup(function(done) {
+  return browser.visit('/', done);
+});
 
   suite('"Famous Italian Explorers" form', function () {
     // #5
     test('submit "surname" : "Colombo" - write your e2e test...', function (done) {
-      browser.fill("surname", "Colombo").pressButton("submit", function () {
-        assert.fail();
-
-        done();
+      browser.fill("surname", "Colombo")
+      browser.pressButton("submit", function () {
+                browser.assert.success();
+                browser.assert.text('span#name', 'Cristoforo')
+                browser.assert.text('span#surname', 'Colombo')
+                browser.assert.element('span#dates', 1)
+                done();
       });
     });
     // #6
     test('submit "surname" : "Vespucci" - write your e2e test...', function (done) {
-      assert.fail();
-
-      done();
+      browser.fill('surname', 'Vespucci')
+      browser.pressButton('submit', () => {
+                browser.assert.success()
+                browser.assert.text('span#name', 'Amerigo')
+                browser.assert.text('span#surname', 'Vespucci')
+                browser.assert.element('span#dates',1)
+                done();
+              });
     });
   });
 });

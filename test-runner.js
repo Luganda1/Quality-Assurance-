@@ -6,7 +6,7 @@ const Mocha = require('mocha'),
     path = require('path');
 
 const mocha = new Mocha();
-const testDir = './tests';
+const testDir = './tests'
 
 
 // Add each .js file to the mocha instance
